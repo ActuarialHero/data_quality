@@ -1,0 +1,54 @@
+---
+title: "Data Quality"
+author: "Kevin McBeth, FCAS, MAAA"
+date: "6/9/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Overview
+
+We'll talk through ways to quickly and easily evaluate data quality before actuarial analyses begin.
+
+Data sets are entirely fictional but represent real-world problems I have encountered in my actuarial career.
+
+The source, fictional data, and presentation available at https://github.com/ActuarialHero/data_quality
+
+## Slide with Bullets
+
+- Ratemaking
+- Modeling
+- Reserving
+
+## Slide with R Output
+
+```{r packages}
+library(readr)
+library(dplyr)
+library(summarytools)
+```
+
+## Read in insurance data sets
+> read_csv("./data_in/blah.csv")
+
+## Replace this with insurance data
+```{r cars, echo = TRUE}
+summary(cars)
+```
+
+## Using dfSummary
+```{r cars dfSummary, echo = TRUE}
+dfSummary(cars)
+```
+
+## Frequency tables
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
