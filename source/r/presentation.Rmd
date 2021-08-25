@@ -1,12 +1,13 @@
 ---
-title: "Data Quality"
+title: "Using R to Evaluate Insurance Data Quality"
 author: "Kevin McBeth, FCAS, MAAA"
-date: "6/9/2021"
+date: "2021-09-28"
 output: ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(reticulate)
 ```
 
 ## Overview
@@ -15,14 +16,52 @@ We'll talk through ways to quickly and easily evaluate data quality before actua
 
 Data sets are entirely fictional but represent real-world problems I have encountered in my actuarial career.
 
-The source, fictional data, and presentation available at https://github.com/ActuarialHero/data_quality
+The source, fictional data, and presentation are available at https://github.com/ActuarialHero/data_quality
+
+## Motivation
+
+I interact with over 100 insurance carriers in my work at Explore Information Services, and we exchange a **lot** of data.
+
+The data I receive varies drastically in quality, from absolutely immaculate to needing to replace the file.
+
+Also, ASOP 23.
+
+## Reading data into R
+
+Three commmonly used packages for importing data into R:
+* readr - For importing rectangular data (like csv, tsv, and fwf)
+* readxl - For importing .xls and .xlsx files into R without the need for external dependencies (like xlsx or xlsReadWrite).
+* RODBC - For importing data from databases using ODBC.
+
+## Clean up fields with dplyr
+
+## Clean up dates with lubridate
+
+## Profile the data with summarytools
+ 
+## Dig in deeper with ggplot2
+
+
+
+## Visualizations with ggplot2
+
+# Great Expectations
+
+
+
+## dfSummary
 
 ## Slide with Bullets
 
-- Ratemaking
-- Modeling
+- Ratemaking & Modeling
 - Reserving
 
+## Ratemaking
+
+- Exposure distributions
+- Premium
+- Losses
+- 
 ## Slide with R Output
 
 ```{r packages}
@@ -44,6 +83,12 @@ summary(cars)
 dfSummary(cars)
 ```
 
+## Numbers you should know:
+- Policy Count
+- Premium
+
+## Things that are too similar
+Some numbers should change from year-to-year
 ## Frequency tables
 
 ## Slide with Plot
@@ -52,3 +97,11 @@ dfSummary(cars)
 plot(pressure)
 ```
 
+## Additional references
+
+* R
+    + [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham
+    + [Tidyverse Website](https://www.tidyverse.org/)
+    + [summarytools GitHub Page](https://github.com/dcomtois/summarytools)
+* Python
+    + [Great Expectations](https://greatexpectations.io/)
