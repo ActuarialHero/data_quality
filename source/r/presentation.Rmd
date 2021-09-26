@@ -1,6 +1,6 @@
 ---
-title: "Using R & Python to Evaluate Insurance Data Quality"
-author: "Kevin McBeth, FCAS, MAAA"
+title: "Using Open Source Tools to Evaluate Insurance Data Quality"
+author: "Kevin McBeth, FCAS, MAAA | Explore Information Services"
 date: "2021-09-28"
 output:
     ioslides_presentation:
@@ -20,23 +20,30 @@ print(py_config())
 - R - summarytools
 - Python - Pandas Profiling
 - Python - Great Expectations
+- Additional References
 - Questions
 
 # Overview
 
-## Overview
+## Motivation
+
+Data is important for actuarial work.
+
+Irrelevant and poor quality data can lead to a tremendous amount of lost time, poor conclusions, and other bad outcomes.
 
 We'll talk through ways to quickly and easily evaluate data quality before actuarial analyses begin.
 
-Data sets are entirely fictional but represent real-world problems I have encountered in my actuarial career.
-
 The source, fictional data, and presentation are available at https://github.com/ActuarialHero/data_quality
 
-## Motivation
+We'll make active use of polling questions and the chat today, so be ready!
 
-At Explore Information Services, I interact with over 100 insurance carriers in my work at Explore Information Services, and we exchange a **lot** of data.
+## My Relevant Background
 
-The data I receive varies drastically in quality, from truly immaculate to needing to replace the file.
+In my role at a data vendor & credit reporting agency, I exchange data with numerous insurance carriers on a regular basis.
+
+The data we receive varies drastically in quality, from truly immaculate to needing a replacement file.
+
+My team and I use the tools we'll discuss to quickly review the data we receive and the data we return.
 
 ## ASOP 23 - Data Quality
 
@@ -49,20 +56,17 @@ ASOP 23 provides guidance to actuaries when
 
 in performing actuarial services.
 
-## ASOP 23 - Section 3.3
+## ASOP 23 - Definitions
 
-A review of data may not always reveal defects. Nevertheless, the actuary should perform a review, unless, in the actuary’s professional judgment, such review is not necessary or not practical. In exercising such professional judgment, the actuary should take into account the purpose and nature of the assignment, any relevant constraints, and the extent of any known checking, verification, or audit of the data that has already been performed.
+**Appropriate Data** - Data suitable for the intended purpose of an analysis and relevant to the system or process being analyzed.
 
-If, in the actuary’s professional judgment, it is not appropriate to perform a review of the data, the actuary should disclose that the actuary has not performed such a review, the reason the actuary has not performed such a review, and any resulting limitations on the use of the actuarial work product, in accordance with section 4.1(c).
+**Data** - Numerical, census, or classification information, or information derived mathematically from such items, but not general or qualitative information. Assumptions are not data, but data are commonly used in the development of actuarial assumptions.
 
-## ASOP 23 - Section 3.3
+**Data Element** - An item of information, such as date of birth or risk classification.
 
-If the actuary performs a review, the actuary should do the following:
+**Review** - An examination of the obvious characteristics of data to determine if such data appear reasonable and consistent for purposes of the assignment. A review is not as detailed as an audit of data.
 
-a. make a reasonable effort to determine the definition of each data element used in the analysis; and
-b. make a reasonable effort to identify data values that are questionable or relationships that are significantly inconsistent. If the actuary believes questionable or inconsistent data values could have a significant effect on the analysis, the actuary should consider taking further steps, when practical, to improve the quality of the data. The actuary should disclose in summary form any unresolved questionable data values that the actuary believes could have a significant effect on the analysis, in accordance with section 4.1(d). The actuary also should disclose any significant steps the actuary has taken to improve the data, in accordance with section 4.1(e).
-
-If the actuary performs a review, the actuary should also consider comparing current data with the data used in the prior analysis for consistency, if similar work has been previously performed for the same or recent periods and if such consistency can reasonably be expected. If the actuary does not have the prior data, the actuary should consider requesting the prior data.
+**Sufficient** - Containing enough data elements or records for the analysis.
 
 ## Poll Question 1
 
@@ -72,21 +76,25 @@ Is your company, principal, or client's data perfect?
 2. No
 3. Maybe
 
+## In the chat...
+
+What are some examples of data issues that you've discovered when you've reviewed data?
+
 ## Data Sources for this presentation
 
 We'll work through the following example data sets today:
 
-1. Reserving data from Glenn Meyer's excellent Monograph. Available from the CAS website.
+1. Reserving data from Glenn Meyer's excellent Monograph. Available from the [CAS website](https://www.casact.org/publications-research/research/research-resources/loss-reserving-data-pulled-naic-schedule-p).
 2. A synthetic (randomly generated, somewhat representative) modeling data set.
 
 ## Poll Question 2
 
 What tools do you normally use for working with data? [Multi-choice]
 
-1. R
-2. Python
-3. SAS
-4. Excel
+1. Excel
+2. R
+3. Python
+4. SAS
 5. Other - [Specify in chat]
 
 # R summarytools Package
@@ -133,6 +141,8 @@ Here are four commonly-used packages for importing data into R:
 * **RODBC** - For importing data from databases using ODBC.
 * **odbc** - A newer package for connecting to databases via ODBC.
 
+R and Pandas in Python do a pretty good job of guessing field types, which makes loading data in pretty smooth. You can also manually specify field formats or edit them when they're in R/Python if needed.
+
 ## Getting the data into R
 
 Today, we'll use the **read_csv** function in the **readr** package to read in the Private Passenger Auto reserving data since it's in CSV format. There are a few options for reading in CSV files, but read_csv does a pretty good job at guessing fields. That said, we can override read_csv's guesses if needed.
@@ -144,7 +154,9 @@ pp_auto <- read_csv("../../data_in/meyers/ppauto_pos.csv")
 
 ## Profiling: Code
 
-My team uses dfSummary from the summarytools package to examine data once it's in R. A single line of code, dfSummary, generates an HTML file with information about the data set and each of its fields in nicely formatted HTML file. Snippets from this about are split across the next X slides.
+My team uses **dfSummary** from the **summarytools** package to examine data once it's in R. 
+
+With a single line of code, dfSummary generates a nicely formatted HTML file with information about the data set and each of its fields. Snippets from this about are split across the next several slides.
 
 ```{r, echo = TRUE}
 library(summarytools)
@@ -294,6 +306,15 @@ pp_auto %>%
     filter(n > 1)
 ```
 
+## R summarytools - Summary
+
+In just a couple of lines of code, we have a good feel for the data set. We were able to verify:
+
+1. The number of records in the data set,
+2. Each record is distinct,
+3. The range of values in each field, and
+4. The distribution of the values of numeric fields.
+
 # Python pandas-profiling
 
 ## Overview
@@ -327,6 +348,19 @@ profile.to_file("../../data_out/auto_policy_driver_profile.html")
 
 ```
 
+## Pandas profiling - Summary
+
+In just a couple of lines of code, we have an even better feel for the data set. We were able to verify:
+
+1. The number of records in the data set,
+2. The number of variables in the data set,
+3. Frequency of missing values,
+4. Frequency of duplicate values,
+5. The number of each type of variable: Numerical, Boolean, and Categorical,
+6. The range of each variable,
+7. The distribution of each variable, including high cardinality, and 
+8. Correlations between variables
+
 # Python - Great Expectations
 
 ## Overview
@@ -335,13 +369,19 @@ Finally, Great Expectations is a python package for Validating, Documenting, and
 
 ## What Are Expecations?
 
-Expectations can be anything. Some common ones:
+Expectations can be anything. Some ones that may be relevant to insurance data:
 
-* Driver's License Number should not be null
+* The data set should include fields for Policy Number, Policy Year, Premiums, and Losses
 * The amount of the claim should not be negative
 * The policy limit should be between $1M and $10M
-* Policy state should be in this list of states
-* 95% of driver ages fall between 16 and
+* Policy state should be in the following states: KS, MN
+* Driver's age should not be null
+* 95% of driver ages fall between 16 and 100
+* The policy form should be HO-3.
+
+## In the chat...
+
+What are some expectations you would have on the fields in your data set?
 
 ## Setting Expectations
 
@@ -363,36 +403,65 @@ You create expectations based on the data you built a model on, and then run dat
 
 ## Great Expectations In Aggregating Data
 
-When you need to aggregate data, you can build expectations on one set and run them on others to see how similar they are. Example scenarios:
+When you need to aggregate data, you can build expectations on one set and run them on others to see how similar they are.
 
-* You may need to combine data from multiple systems. You may discover that the state codes are different between systems.
-* You are aggregating data from multiple insurance companies 
-* You are creating industry benchmarks and have many different (non-insurance) companies submitting their loss data.
+Example scenarios:
+
+- You may need to combine data from multiple systems. You may discover that the state codes are different between systems.
+- You are aggregating data from multiple insurance companies 
+- You are creating industry benchmarks and have many different (non-insurance) companies submitting their loss data.
+
+## Great Expectations - Advantages and Disadvantages
+
+Advantages:
+
+- Flexibility
+- More easily compares against other data sets
+- Handles data sets larger than memory
+
+Disadvantages:
+
+- Installing the package is more difficult
+- Setting up data expectations takes time
 
 # Review
 
 ## Review
 
+We've discussed three tools today:
+
 - R - summarytools
 - Python - Pandas Profiling
 - Python - Great Expectations
 
-# Questions
+Any of them would be a great start, and take minimal work, provided your company uses Python and/or R.
 
-## Question
+If you company has a preference of R or Python, lean toward those tools.
 
-- Overview
-- R - summarytools
-- Python - Pandas Profiling
-- Python - Great Expectations
-- Questions
+# Additional references
 
 ## Additional references
 
+* CAS
+    + [CAS Monograph No. 1: Stochastic Loss Reserving Using Bayesian MCMC Models](https://www.casact.org/monograph/cas-monograph-no-1)
+    + [CAS Monograph No. 8: Stochastic Loss Reserving Using Bayesian MCMC Models (2nd Edition)](https://www.casact.org/monograph/cas-monograph-no-8)
+    + [CAS Monograph No. 9: Data Quality Management in the P&C Insurance Sector](https://www.casact.org/monograph/cas-monograph-no-9)
 * R
+    + [RMarkdown Guide](https://rmarkdown.rstudio.com/articles.html)
     + [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham
     + [Tidyverse Website](https://www.tidyverse.org/)
     + [summarytools GitHub Page](https://github.com/dcomtois/summarytools)
 * Python
     + [Pandas Profiling](https://github.com/pandas-profiling/pandas-profiling)
     + [Great Expectations](https://greatexpectations.io/)
+
+# Questions
+
+## Questions
+
+- Overview
+- R - summarytools
+- Python - Pandas Profiling
+- Python - Great Expectations
+- Additional References
+- Questions
